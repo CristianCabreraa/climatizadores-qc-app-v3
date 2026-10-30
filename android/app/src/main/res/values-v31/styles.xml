@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="Theme.GreenAirQC.NoActionBar" parent="Theme.GreenAirQC">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+    <item name="android:windowSplashScreenBackground">#F4F7F5</item>
+    <item name="android:statusBarColor">#183c33</item>
+  </style>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="greenair-camera" path="camera/" />
+    <cache-path name="greenair-reports" path="shared_pdfs/" />
+</paths>

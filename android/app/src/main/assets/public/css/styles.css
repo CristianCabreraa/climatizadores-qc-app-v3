@@ -1,0 +1,110 @@
+/* Modern Industrial UI Styles for Technical Test App */
+:root {
+  --primary: #16804d;
+  --primary-dark: #125e39;
+  --primary-light: #e9f6ef;
+  --success: #10b981;
+  --success-dark: #059669;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --slate-900: #183c33;
+  --slate-800: #1e293b;
+  --slate-100: #f1f5f9;
+  --slate-50: #f8fafc;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f7f5;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Tactile switches and buttons */
+.btn-press {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Custom Checkpoint Card */
+.checkpoint-card {
+  transition: all 0.2s ease;
+  border: 1.5px solid #e2e8f0;
+}
+.checkpoint-card.checked {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+/* Smooth spinner */
+@keyframes spin-fast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-fast {
+  animation: spin-fast 0.75s linear infinite;
+}
+
+/* Pulse animation for active scanning */
+@keyframes scan-line {
+  0% { top: 0%; opacity: 0.8; }
+  50% { top: 90%; opacity: 1; }
+  100% { top: 0%; opacity: 0.8; }
+}
+.scanner-laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #16804d, #72c9a0, #16804d, transparent);
+  box-shadow: 0 0 12px #72c9a0;
+  animation: scan-line 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Mobile viewport fix */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Photo Thumbnail Badges */
+.badge-step {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* GreenAir 2.1 refinements: understated white/gray surfaces, primary forest green. */
+button, label { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #15834d; outline-offset: 2px; }
+.checkpoint-card { background: #f5f8f6; border-color: #d9e5de; }
+.checkpoint-card.checked { background: #edf8f1; border-color: #218554; }
+.checkpoint-status { min-width: 74px; text-align: center; }
+@media (max-width: 430px) { .checkpoint-card { gap: 8px; } .checkpoint-status { font-size: 10px; padding: 5px 7px; } }

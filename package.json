@@ -1,0 +1,34 @@
+{
+  "name": "climatizadores-qc-app",
+  "version": "2.1.0",
+  "description": "Aplicación de Registro y Control de Calidad Técnico para Climatizadores y Recuperadores de Aire",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "cap:add": "npx cap add android",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android",
+    "build:apk": "npx cap sync android && cd android && gradlew assembleDebug"
+  },
+  "keywords": [
+    "hvac",
+    "climatizadores",
+    "recuperadores",
+    "control-calidad",
+    "ocr",
+    "pdf",
+    "android",
+    "apk",
+    "capacitor"
+  ],
+  "author": "GreenAir Industrial",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/camera": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/share": "^6.0.0"
+  }
+}
