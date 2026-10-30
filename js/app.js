@@ -748,10 +748,14 @@ class AppController {
 
   // 3. WHATSAPP DIRECT SHARE
   async handleWhatsAppShare() {
-    if (!this.currentPdfBlob) return;
-    const res = await ShareEngine.sharePdfNative(this.currentPdfBlob, this.currentPdfFileName, this.generatedData || this.getFormData());
-    this.showToast(res.success ? 'Selecciona WhatsApp en el menú para adjuntar el PDF.' :
-      (res.message || 'No se pudo adjuntar automáticamente. Guarda el PDF y compártelo manualmente.'), res.success ? 'info' : 'warning');
+    if (!this.currentPdfBlob) {
+      this.showToast('Primero genera una ficha PDF.', 'error');
+      return;
+    }
+    const res = await ShareEngine.sharePdfWhatsApp(
+      this.currentPdfBlob, this.currentPdfFileName, this.generatedData || this.getFormData());
+    this.showToast(res.message || (res.pending ? 'WhatsApp está abriéndose con el PDF.' :
+      'Selecciona WhatsApp para compartir el PDF.'), (res.pending || res.success) ? 'info' : 'warning');
   }
 
   // 4. GMAIL DIRECT SHARE
