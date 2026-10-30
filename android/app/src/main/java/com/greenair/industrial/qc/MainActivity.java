@@ -3,6 +3,9 @@ package com.greenair.industrial.qc;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -144,6 +147,53 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra(Intent.EXTRA_TITLE, pendingPdf.getName());
                     startActivityForResult(intent, REQUEST_PDF_SAVE);
                 } catch (Exception ex) { nativeError("No se pudo preparar el PDF: " + ex.getMessage()); }
+            });
+        }
+        /**
+         * WhatsApp: share the PDF as the only payload, to prevent recipients
+         * choosing EXTRA_TEXT over EXTRA_STREAM. The generated summary is copied
+         * to clipboard by the explicit user action so it can be pasted into a
+         * document caption (if available) or sent as a follow-up message.
+         * Android cannot force WhatsApp to send PDF and caption in one bubble.
+         */
+        @JavascriptInterface public void sharePdfWhatsApp(String base64, String fileName, String summary) {
+            runOnUiThread(() -> {
+                try {
+                    File pdf = decodePdf(base64, fileName);
+                    Uri uri = getFileUri(pdf);
+
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    if (clipboard == null) throw new Exception("Portapapeles no disponible");
+                    clipboard.setPrimaryClip(ClipData.newPlainText(
+                        "Resumen de ficha GreenAir", summary == null ? "" : summary));
+
+                    Intent send = new Intent(Intent.ACTION_SEND);
+                    send.setType("application/pdf");
+                    send.putExtra(Intent.EXTRA_STREAM, uri);
+                    send.setClipData(ClipData.newRawUri("Ficha PDF GreenAir", uri));
+                    send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    // Deliberately omit EXTRA_TEXT here. WhatsApp versions may
+                    // otherwise interpret the share as a text-only message.
+
+                    boolean started = false;
+                    for (String packageName : new String[]{"com.whatsapp", "com.whatsapp.w4b"}) {
+                        Intent targeted = new Intent(send);
+                        targeted.setPackage(packageName);
+                        try {
+                            startActivity(targeted);
+                            started = true;
+                            break;
+                        } catch (ActivityNotFoundException notInstalled) {
+                            Log.i(TAG, "WhatsApp target not installed: " + packageName);
+                        }
+                    }
+                    if (!started) {
+                        startActivity(Intent.createChooser(send, "Compartir ficha PDF"));
+                    }
+                    nativeEvent("whatsapp_opened");
+                } catch (Exception ex) {
+                    nativeError("No se pudo abrir WhatsApp con el PDF: " + ex.getMessage());
+                }
             });
         }
         @JavascriptInterface public void sharePdf(String base64, String fileName, String text) {
