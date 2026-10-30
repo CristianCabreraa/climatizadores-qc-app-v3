@@ -47,6 +47,31 @@ export const ShareEngine = {
       return error.name === 'AbortError' ? { cancelled: true } : { success: false, message: error.message };
     }
   },
+  /**
+   * Android: share the actual PDF as a document through WhatsApp and copy the
+   * summary to clipboard so the user can paste it as a caption or second text.
+   * WhatsApp, not GreenAir, decides whether it supports document captions.
+   */
+  async sharePdfWhatsApp(blob, fileName, data = {}) {
+    if (!blob || blob.size < 100 || blob.type !== 'application/pdf') {
+      return { success: false, message: 'Primero genera una ficha PDF válida.' };
+    }
+    if (window.GreenAirNative?.sharePdfWhatsApp) {
+      try {
+        const base64 = await this.asBase64(blob);
+        window.GreenAirNative.sharePdfWhatsApp(base64, fileName, this.summary(data));
+        return {
+          pending: true,
+          method: 'android_whatsapp',
+          message: 'WhatsApp se abrirá con el PDF. El resumen se ha preparado en el portapapeles: pégalo como comentario o en un mensaje posterior si no aparece.'
+        };
+      } catch (error) {
+        return { success: false, message: 'No se pudo preparar WhatsApp: ' + error.message };
+      }
+    }
+    // Browser: cannot force a specific app to accept a file. Use system share.
+    return this.sharePdfNative(blob, fileName, data);
+  },
   async sharePdfNative(blob, fileName, data = {}) {
     try {
       if (window.GreenAirNative?.sharePdf) {
