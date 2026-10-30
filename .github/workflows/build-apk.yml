@@ -1,0 +1,52 @@
+name: GreenAir QC 2.1 - APK de prueba
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Gradle compatible con Android Gradle Plugin 8.2.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.2.1'
+      - name: Comprobar archivos y copiar web a Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s index.html
+          test -s js/app.js
+          test -s js/pdf-generator.js
+          test -s js/share.js
+          mkdir -p android/app/src/main/assets/public
+          rm -rf android/app/src/main/assets/public/*
+          cp index.html manifest.json sw.js android/app/src/main/assets/public/
+          cp -r assets css js android/app/src/main/assets/public/
+          grep -q 'orderNumberInput' android/app/src/main/assets/public/index.html
+          grep -q 'GreenAirNative' android/app/src/main/assets/public/js/share.js
+      - name: Compilar APK Android
+        working-directory: android
+        run: gradle --no-daemon assembleDebug
+      - name: Comprobar APK
+        run: |
+          set -euo pipefail
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -t android/app/build/outputs/apk/debug/app-debug.apk >/dev/null
+      - name: Descargar APK de prueba
+        uses: actions/upload-artifact@v4
+        with:
+          name: GreenAir-QC-v2-1-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
