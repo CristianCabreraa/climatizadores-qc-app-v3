@@ -152,11 +152,11 @@ export const PDFGenerator = {
     currentY += 4;
 
     const checkpoints = [
-      { name: 'Presostatos', checked: data.checkpoints?.presostatos, desc: 'Verificación de corte y rearme por presión diferencial' },
-      { name: 'Ventilador de Impulsión', checked: data.checkpoints?.ventImpulsion, desc: 'Sentido de giro, vibraciones, consumo y caudal nominal' },
-      { name: 'Ventilador de Retorno', checked: data.checkpoints?.ventRetorno, desc: 'Sentido de giro, balance dinámico y consumo eléctrico' },
-      { name: 'Temperatura de Impulsión', checked: data.checkpoints?.tempImpulsion, desc: 'Sonda térmica calibrada y respuesta dinámica' },
-      { name: 'Temperatura de Retorno', checked: data.checkpoints?.tempRetorno, desc: 'Sonda térmica calibrada y lectura en consola' },
+      { name: 'Presostatos', checked: data.checkpoints?.presostatos, desc: 'Verificación mangueras y calibracion de presion' },
+      { name: 'Ventilador de Impulsión', checked: data.checkpoints?.ventImpulsion, desc: 'Sentido de giro, vibraciones y variación de velocidades' },
+      { name: 'Ventilador de Retorno', checked: data.checkpoints?.ventRetorno, desc: 'Sentido de giro, vibraciones y variación de velocidades' },
+      { name: 'Temperatura de Impulsión', checked: data.checkpoints?.tempImpulsion, desc: 'Sonda térmica calibrada y lectura en pantalla' },
+      { name: 'Temperatura de Retorno', checked: data.checkpoints?.tempRetorno, desc: 'Sonda térmica calibrada y lectura en pantalla' },
     ];
 
     // Table Header
@@ -229,7 +229,7 @@ export const PDFGenerator = {
         name: 'Mando de Superficie',
         has: data.optionals?.mandoSuperficie?.has,
         working: data.optionals?.mandoSuperficie?.working,
-        desc: 'Pantalla mural de control táctil / botonera de usuario'
+        desc: 'conexión y enlace '
       }
     ];
 
