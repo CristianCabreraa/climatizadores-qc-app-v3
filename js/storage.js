@@ -20,7 +20,7 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_DATA = {
-  cuadros: ['GISER', 'GreenAir Industrial', 'Tecna Clima', 'Systemair', 'Salvador Escoda', 'Daikin Industrial'],
+  cuadros: ['GISER 440v', 'GISER 230v', 'GISER 230v pequeño', 'Element 230v', 'Element 440v', 'Avanz 230v', 'Avanz 440v'],
   sondasCo2: [],
   configuraciones: [], // Initial clean base; user loads custom configurations
   montadores: [],
