@@ -325,8 +325,9 @@ export const PDFGenerator = {
 
     currentY += 25;
 
+    
     // ----------------------------------------------------
-    // 6. PHOTOGRAPHIC EVIDENCE (ADAPTIVE: 0, 1, 2, 3+ PHOTOS)
+    // 6. PHOTOGRAPHIC EVIDENCE (FULL WIDTH, PROPORTIONAL)
     // ----------------------------------------------------
     const photos = data.photos || [];
     doc.setFont('helvetica', 'bold');
@@ -336,7 +337,6 @@ export const PDFGenerator = {
     currentY += 4;
 
     if (photos.length === 0) {
-      // 0 photos: Clean placeholder, perfectly balanced layout
       doc.setFillColor(248, 250, 252);
       doc.roundedRect(margin, currentY, contentWidth, 16, 1.5, 1.5, 'F');
       doc.setDrawColor(226, 232, 240);
@@ -350,38 +350,89 @@ export const PDFGenerator = {
       doc.setTextColor(148, 163, 184);
       doc.text('Los resultados de los checkpoints están documentados en la tabla anterior.', margin + 6, currentY + 11.5);
       currentY += 20;
+
     } else {
-      // Every attached photo must appear in the report, with automatic new pages.
-      const gap = 5;
-      const w = (contentWidth - gap) / 2;
-      const h = 46;
+      // Una fotografía por fila, ocupando todo el ancho disponible.
+      const photoGap = 5;
+      const captionHeight = 7;
+      const topMargin = 18;
+      const bottomMargin = 18;
+
+      // Altura máxima para que la fotografía entre en una página A4.
+      const maxImageHeight = pageHeight - topMargin - bottomMargin - captionHeight - photoGap;
+
       for (let idx = 0; idx < photos.length; idx++) {
-        const column = idx % 2;
-        if (column === 0 && currentY + h + 8 > pageHeight - 20) {
-          doc.addPage();
-          currentY = 18;
-        }
-        const x = margin + column * (w + gap);
         const photo = photos[idx];
+
         try {
-          doc.addImage(photo.dataUrl, 'JPEG', x, currentY, w, h - 7, undefined, 'FAST');
+          // Obtener dimensiones originales.
+          const imageProps = doc.getImageProperties(photo.dataUrl);
+
+          // Calcular altura proporcional al ancho completo.
+          let imageWidth = contentWidth;
+          let imageHeight = imageWidth * (imageProps.height / imageProps.width);
+
+          // Evitar que fotografías verticales excedan la página.
+          if (imageHeight > maxImageHeight) {
+            const scale = maxImageHeight / imageHeight;
+            imageWidth *= scale;
+            imageHeight = maxImageHeight;
+          }
+
+          const blockHeight = imageHeight + captionHeight;
+
+          // Crear una página nueva si la fotografía no entra.
+          if (currentY + blockHeight > pageHeight - bottomMargin) {
+            doc.addPage();
+            currentY = topMargin;
+          }
+
+          // Centrar la fotografía.
+          const x = margin + (contentWidth - imageWidth) / 2;
+
+          // Insertar imagen sin deformar sus proporciones.
+          doc.addImage(
+            photo.dataUrl,
+            'JPEG',
+            x,
+            currentY,
+            imageWidth,
+            imageHeight,
+            undefined,
+            'FAST'
+          );
+
+          // Borde de la fotografía.
           doc.setDrawColor(160, 174, 167);
-          doc.rect(x, currentY, w, h - 7, 'S');
+          doc.rect(x, currentY, imageWidth, imageHeight, 'S');
+
+          // Franja inferior con descripción.
           doc.setFillColor(24, 60, 51);
-          doc.rect(x, currentY + h - 7, w, 7, 'F');
+          doc.rect(x, currentY + imageHeight, imageWidth, captionHeight, 'F');
+
           doc.setTextColor(255, 255, 255);
           doc.setFont('helvetica', 'normal');
           doc.setFontSize(7);
+
           const text = `Foto ${idx + 1}: ${photo.caption || 'Evidencia'}`;
-          doc.text(text.length > 53 ? text.slice(0, 50) + '...' : text, x + 2, currentY + h - 2.4);
+          doc.text(
+            text.length > 53 ? text.slice(0, 50) + '...' : text,
+            x + 2,
+            currentY + imageHeight + 4.6
+          );
+
+          // Espacio antes de la siguiente fotografía.
+          currentY += blockHeight + photoGap;
+
         } catch (err) {
           console.error('No se pudo incluir foto en PDF:', err);
           doc.setTextColor(153, 27, 27);
-          doc.text(`Foto ${idx + 1} no disponible`, x + 2, currentY + 8);
+          doc.text(`Foto ${idx + 1} no disponible`, margin + 2, currentY + 8);
+          currentY += 12;
         }
-        if (column === 1 || idx === photos.length - 1) currentY += h + 5;
       }
     }
+
 
     // ----------------------------------------------------
     // 7. FOOTER & COMPLIANCE
