@@ -20,11 +20,11 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_DATA = {
-  cuadros: ['GISER 440v', 'GISER 230v', 'GISER 230v pequeño', 'Element 230v', 'Element 440v', 'Avanz 230v', 'Avanz 440v'],
-  sondasCo2: [],
-  configuraciones: [], // Initial clean base; user loads custom configurations
-  montadores: [],
-  electricistas: []
+  cuadros: ['GISER 440v', 'GISER 230v', 'GISER 230v pequeño', 'Element 230v', 'Element 440v', 'Avanz 230v', 'Avanz 440v', 'Toshiba 230v', 'Toshiba 440v'],
+  sondasCo2: ['Sonda Co2', 'Sonda Co2 de Ambiente',],
+  configuraciones: ['AV', 'AH', 'BH'], // Initial clean base; user loads custom configurations
+  montadores: ['PAULO', 'BRENO', 'LEANDRO', 'MATEUS', 'JHOYNER', 'TIZIANO', 'RAFAEL', 'YURI', 'TIZIANO', 'GERARDO'],
+  electricistas: ['JOSE', 'CRISTIAN']
 };
 
 export const PersonnelStorage = {
